@@ -1,9 +1,14 @@
+import 'package:budget_tracker_ui/pages/root_app.dart';
 import 'package:budget_tracker_ui/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
+  ProfilePage(RootApp rootApp){
+
+  }
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -164,6 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                           Container(
+                            //need to change
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: white)),

@@ -1,6 +1,6 @@
 import 'package:budget_tracker_ui/theme/colors.dart';
 
-const List budget_json = [
+List budget_json = [
   {
     "name": "Gift",
     "price": "\$2250.00",

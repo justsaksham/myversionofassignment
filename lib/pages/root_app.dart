@@ -9,20 +9,44 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 class RootApp extends StatefulWidget {
+  var rootState;
+  void setRoot(var root){
+    rootState=root;
+  }
+  void initializefragments(){
+    rootState.selectedTab(rootState.pageIndex);
+  }
+
   @override
-  _RootAppState createState() => _RootAppState();
+  _RootAppState createState() => _RootAppState(this);
 }
 
 class _RootAppState extends State<RootApp> {
   int pageIndex = 0;
-  List<Widget> pages = [
-    DailyPage(),
-    StatsPage(),
-    BudgetPage(),
-    ProfilePage(),
-    CreatBudgetPage()
-  ];
+  var rootApp;
+  var context;
+  List<Widget> pages ;
 
+  _RootAppState(RootApp root){
+    rootApp=root;
+    rootApp.setRoot(this);
+    this.pages = [
+    DailyPage(rootApp),
+    StatsPage(rootApp),
+    BudgetPage(rootApp),
+    ProfilePage(rootApp),
+    CreatBudgetPage(rootApp)
+    ];
+  }
+void initializefragments(){
+  pages= [
+    DailyPage(rootApp),
+    StatsPage(rootApp),
+    BudgetPage(rootApp),
+    ProfilePage(rootApp),
+    CreatBudgetPage(rootApp)
+  ];
+}
   @override
   void initState() {
     // TODO: implement initState
@@ -36,6 +60,7 @@ class _RootAppState extends State<RootApp> {
 
   @override
   Widget build(BuildContext context) {
+    this.context=context;
     return Scaffold(
         body: getBody(),
         bottomNavigationBar: getFooter(),
@@ -45,7 +70,7 @@ class _RootAppState extends State<RootApp> {
             },
             child: Icon(
               Icons.add,
-              size: 25,
+              size: 26,
             ),
             backgroundColor: Colors.pink
             //params
@@ -87,9 +112,10 @@ class _RootAppState extends State<RootApp> {
     );
   }
 
-  selectedTab(index) {
+  void selectedTab(int index) {
     setState(() {
       pageIndex = index;
+initializefragments();
     });
   }
 }

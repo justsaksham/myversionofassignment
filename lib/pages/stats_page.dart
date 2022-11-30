@@ -1,4 +1,5 @@
 import 'package:budget_tracker_ui/json/day_month.dart';
+import 'package:budget_tracker_ui/pages/root_app.dart';
 import 'package:budget_tracker_ui/theme/colors.dart';
 import 'package:budget_tracker_ui/widget/chart.dart';
 import 'package:flutter/gestures.dart';
@@ -6,7 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../json/budget_json.dart';
+import '../json/daily_json.dart';
+
 class StatsPage extends StatefulWidget {
+  StatsPage(RootApp rootApp){
+  }
+
   @override
   _StatsPageState createState() => _StatsPageState();
 }
@@ -31,13 +38,13 @@ class _StatsPageState extends State<StatsPage> {
         "icon": Icons.arrow_back,
         "color": blue,
         "label": "Income",
-        "cost": "\$6593.75"
+        "cost": "\$"+getTotalIncome().toString(),
       },
       {
         "icon": Icons.arrow_forward,
         "color": red,
         "label": "Expense",
-        "cost": "\$2645.50"
+        "cost": "\$"+getTotalAmount().toString(),
       }
     ];
     return SingleChildScrollView(
@@ -73,55 +80,55 @@ class _StatsPageState extends State<StatsPage> {
                   SizedBox(
                     height: 25,
                   ),
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(months.length, (index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              activeDay = index;
-                            });
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 40) / 6,
-                            child: Column(
-                              children: [
-                                Text(
-                                  months[index]['label'],
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: activeDay == index
-                                          ? primary
-                                          : black.withOpacity(0.02),
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                          color: activeDay == index
-                                              ? primary
-                                              : black.withOpacity(0.1))),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 12, right: 12, top: 7, bottom: 7),
-                                    child: Text(
-                                      months[index]['day'],
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          color: activeDay == index
-                                              ? white
-                                              : black),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      }))
+                  // Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: List.generate(months.length, (index) {
+                  //       return GestureDetector(
+                  //         onTap: () {
+                  //           setState(() {
+                  //             activeDay = index;
+                  //           });
+                  //         },
+                  //         child: Container(
+                  //           width: (MediaQuery.of(context).size.width - 40) / 6,
+                  //           child: Column(
+                  //             children: [
+                  //               Text(
+                  //                 months[index]['label'],
+                  //                 style: TextStyle(fontSize: 10),
+                  //               ),
+                  //               SizedBox(
+                  //                 height: 10,
+                  //               ),
+                  //               Container(
+                  //                 decoration: BoxDecoration(
+                  //                     color: activeDay == index
+                  //                         ? primary
+                  //                         : black.withOpacity(0.02),
+                  //                     borderRadius: BorderRadius.circular(5),
+                  //                     border: Border.all(
+                  //                         color: activeDay == index
+                  //                             ? primary
+                  //                             : black.withOpacity(0.1))),
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.only(
+                  //                       left: 12, right: 12, top: 7, bottom: 7),
+                  //                   child: Text(
+                  //                     months[index]['day'],
+                  //                     style: TextStyle(
+                  //                         fontSize: 10,
+                  //                         fontWeight: FontWeight.w600,
+                  //                         color: activeDay == index
+                  //                             ? white
+                  //                             : black),
+                  //                   ),
+                  //                 ),
+                  //               )
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }))
                 ],
               ),
             ),
@@ -133,7 +140,7 @@ class _StatsPageState extends State<StatsPage> {
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Container(
               width: double.infinity,
-              height: 250,
+              height: 100,
               decoration: BoxDecoration(
                   color: white,
                   borderRadius: BorderRadius.circular(12),
@@ -167,7 +174,7 @@ class _StatsPageState extends State<StatsPage> {
                             height: 10,
                           ),
                           Text(
-                            "\$2446.90",
+                            "\$"+getNetBalance().toString(),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 25,
@@ -176,16 +183,17 @@ class _StatsPageState extends State<StatsPage> {
                         ],
                       ),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: (size.width - 20),
-                        height: 150,
-                        child: LineChart(
-                          mainData(),
-                        ),
-                      ),
-                    )
+                    //for marking
+                    // Positioned(
+                    //   bottom: 0,
+                    //   child: Container(
+                    //     width: (size.width - 20),
+                    //     height: 150,
+                    //     child: LineChart(
+                    //       mainData(),
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -260,5 +268,34 @@ class _StatsPageState extends State<StatsPage> {
         ],
       ),
     );
+  }
+
+ double getTotalAmount() {
+
+    double total=0;
+    for(int i=0;i<daily.length;i++){
+      var amount=daily[i]['price'].toString().substring(1,daily[i]['price'].toString().length-1);
+      total=total+double.parse(amount);
+      print(total);
+    }
+    // print(total.toString());
+    return total;
+  }
+
+  double getTotalIncome() {
+    double total=0;
+    for(int i=0;i<budget_json.length;i++){
+      var amount=budget_json[i]['price'].toString().substring(1,budget_json[i]['price'].toString().length-1);
+      total=total+double.parse(amount);
+      print(total);
+    }
+    // print(total.toString());
+    return total;
+  }
+
+  double getNetBalance() {
+    var expense=getTotalAmount();
+    var income=getTotalIncome();
+    return income-expense;
   }
 }

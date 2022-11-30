@@ -1,9 +1,16 @@
+import 'package:budget_tracker_ui/Util/Helper.dart';
 import 'package:budget_tracker_ui/json/create_budget_json.dart';
+import 'package:budget_tracker_ui/json/daily_json.dart';
+import 'package:budget_tracker_ui/pages/root_app.dart';
 import 'package:budget_tracker_ui/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class CreatBudgetPage extends StatefulWidget {
+  CreatBudgetPage(RootApp rootApp){
+
+  }
+
   @override
   _CreatBudgetPageState createState() => _CreatBudgetPageState();
 }
@@ -12,6 +19,11 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
   int activeCategory = 0;
   TextEditingController _budgetName =
       TextEditingController(text: "Grocery Budget");
+  var color=black;
+  var url=categories[0]['icon'];
+  var name =categories[0]['name'];
+  var price=categories[0]['price'];
+  var total=0;
   TextEditingController _budgetPrice = TextEditingController(text: "\$1500.00");
   @override
   Widget build(BuildContext context) {
@@ -23,6 +35,7 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
 
   Widget getBody() {
     var size = MediaQuery.of(context).size;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,6 +94,8 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
                 onTap: () {
                   setState(() {
                     activeCategory = index;
+                    url=categories[activeCategory]['icon'];
+                    name= categories[activeCategory]['name'];
                   });
                 },
                 child: Padding(
@@ -209,10 +224,21 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
                       decoration: BoxDecoration(
                           color: primary,
                           borderRadius: BorderRadius.circular(15)),
-                      child: Icon(
-                        Icons.arrow_forward,
-                        color: white,
+                      child:IconButton(
+                        color: color,
+                        onPressed: () {
+                          setState(() {
+                            addBudgetToDB();
+                            getToast("Budgets got added");
+                          });
+                        },
+                        icon:Icon(
+                          Icons.arrow_forward,
+                          color: white,
+                        ) ,
+
                       ),
+
                     ),
                   ],
                 )
@@ -222,5 +248,20 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
         ],
       ),
     );
+  }
+
+  void addBudgetToDB() {
+    price=_budgetPrice.text;
+    print(price);
+    print(url);
+    print("Write logic to add in array");
+    var json={
+      "name":name,
+      "icon":url,
+      "date":"10Nov",
+      "price":price
+    };
+    daily.add(json);
+    print(daily);
   }
 }
